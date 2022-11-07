@@ -23,12 +23,11 @@ def get_module_docstring(filepath):
 
     co = compile(source, filepath, "exec")
 
-    if co.co_consts and isinstance(co.co_consts[0], str):
-        docstring = co.co_consts[0]
-    else:
-        docstring = None
-
-    return docstring
+    return (
+        co.co_consts[0]
+        if co.co_consts and isinstance(co.co_consts[0], str)
+        else None
+    )
 
 
 def setup(app):

@@ -26,7 +26,7 @@ def normalize(exception):
             start_directory = os.path.dirname(os.path.dirname(__file__))
             if match:
                 groups = list(match.groups())
-                groups[1] = os.path.relpath(os.path.abspath(groups[1]), start_directory) + "/"
+                groups[1] = f"{os.path.relpath(os.path.abspath(groups[1]), start_directory)}/"
                 relpath = "".join(groups)
             else:
                 relpath = os.path.relpath(os.path.abspath(filepath), start_directory)
@@ -88,8 +88,14 @@ def generate(output, outpath):
 def compare_exception(dirname, filename):
     cwd = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     python = sys.executable or "python"
-    filepath = os.path.join("tests", "exceptions", "source", dirname, filename + ".py")
-    outpath = os.path.join(cwd, "tests", "exceptions", "output", dirname, filename + ".txt")
+    filepath = os.path.join(
+        "tests", "exceptions", "source", dirname, f"{filename}.py"
+    )
+
+    outpath = os.path.join(
+        cwd, "tests", "exceptions", "output", dirname, f"{filename}.txt"
+    )
+
 
     with subprocess.Popen(
         [python, filepath],

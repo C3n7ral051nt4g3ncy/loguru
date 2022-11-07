@@ -4,9 +4,7 @@ def filter_none(record):
 
 def filter_by_name(record, parent, length):
     name = record["name"]
-    if name is None:
-        return False
-    return (name + ".")[:length] == parent
+    return False if name is None else f"{name}."[:length] == parent
 
 
 def filter_by_level(record, level_per_module):

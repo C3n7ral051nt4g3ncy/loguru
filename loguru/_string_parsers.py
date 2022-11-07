@@ -20,10 +20,7 @@ class Frequencies:
 
     @staticmethod
     def monthly(t):
-        if t.month == 12:
-            y, m = t.year + 1, 1
-        else:
-            y, m = t.year, t.month + 1
+        y, m = (t.year + 1, 1) if t.month == 12 else (t.year, t.month + 1)
         return t.replace(year=y, month=m, day=1, hour=0, minute=0, second=0, microsecond=0)
 
     @staticmethod
@@ -72,7 +69,7 @@ def parse_duration(duration):
         ("us|microseconds?", 0.000001),
     ]
 
-    if not re.fullmatch(reg + "+", duration, flags=re.I):
+    if not re.fullmatch(f"{reg}+", duration, flags=re.I):
         return None
 
     seconds = 0
@@ -181,7 +178,4 @@ def parse_daytime(daytime):
     except ValueError as e:
         raise ValueError("Invalid time while parsing daytime: '%s'" % time) from e
 
-    if day is None and time is None:
-        return None
-
-    return day, time
+    return None if day is None and time is None else (day, time)

@@ -30,9 +30,9 @@ def test_serialize_non_ascii_characters():
     sink = JsonSink()
     logger.add(sink, format="{level.icon} {message}", serialize=True)
     logger.debug("天")
-    assert re.search(r'"message": "([^\"]+)"', sink.message).group(1) == "天"
-    assert re.search(r'"text": "([^\"]+)"', sink.message).group(1) == "🐞 天\\n"
-    assert re.search(r'"icon": "([^\"]+)"', sink.message).group(1) == "🐞"
+    assert re.search(r'"message": "([^\"]+)"', sink.message)[1] == "天"
+    assert re.search(r'"text": "([^\"]+)"', sink.message)[1] == "🐞 天\\n"
+    assert re.search(r'"icon": "([^\"]+)"', sink.message)[1] == "🐞"
     assert sink.json["text"] == "🐞 天\n"
     assert sink.dict["message"] == sink.json["record"]["message"] == "天"
 

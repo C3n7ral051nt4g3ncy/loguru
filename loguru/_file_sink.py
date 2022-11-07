@@ -17,12 +17,12 @@ def generate_rename_path(root, ext, creation_time):
     creation_datetime = datetime.datetime.fromtimestamp(creation_time)
     date = FileDateFormatter(creation_datetime)
 
-    renamed_path = "{}.{}{}".format(root, date, ext)
+    renamed_path = f"{root}.{date}{ext}"
     counter = 1
 
     while os.path.exists(renamed_path):
         counter += 1
-        renamed_path = "{}.{}.{}{}".format(root, date, counter, ext)
+        renamed_path = f"{root}.{date}.{counter}{ext}"
 
     return renamed_path
 
@@ -56,7 +56,7 @@ class Compression:
 
     @staticmethod
     def compression(path_in, ext, compress_function):
-        path_out = "{}{}".format(path_in, ext)
+        path_out = f"{path_in}{ext}"
 
         if os.path.exists(path_out):
             creation_time = get_ctime(path_out)
@@ -283,10 +283,11 @@ class FileSink:
 
         root, ext = os.path.splitext(escaped)
 
-        if not ext:
-            return [escaped, escaped + ".*"]
-
-        return [escaped, escaped + ".*", root + ".*" + ext, root + ".*" + ext + ".*"]
+        return (
+            [escaped, f"{escaped}.*", f"{root}.*{ext}", f"{root}.*{ext}.*"]
+            if ext
+            else [escaped, f"{escaped}.*"]
+        )
 
     @staticmethod
     def _make_rotation_function(rotation):
@@ -407,7 +408,10 @@ class FileSink:
             else:
                 raise ValueError("Invalid compression format: '%s'" % ext)
 
-            return partial(Compression.compression, ext="." + ext, compress_function=compress)
+            return partial(
+                Compression.compression, ext=f".{ext}", compress_function=compress
+            )
+
         elif callable(compression):
             return compression
         else:

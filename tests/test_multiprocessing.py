@@ -535,11 +535,7 @@ def test_not_picklable_sinks_inheritance(capsys, tmp_path, fork_context):
 @pytest.mark.parametrize("enqueue", [True, False])
 @pytest.mark.parametrize("deepcopied", [True, False])
 def test_no_deadlock_if_internal_lock_in_use(tmp_path, enqueue, deepcopied, fork_context):
-    if deepcopied:
-        logger_ = copy.deepcopy(logger)
-    else:
-        logger_ = logger
-
+    logger_ = copy.deepcopy(logger) if deepcopied else logger
     output = tmp_path / "stdout.txt"
     stdout = output.open("w")
 

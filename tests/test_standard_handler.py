@@ -60,10 +60,13 @@ def test_no_conflict_with_extra_dict(capsys):
 def test_no_exception():
     result = None
 
+
+
     class NoExceptionHandler(Handler):
         def emit(self, record):
             nonlocal result
-            result = bool(not record.exc_info)
+            result = not record.exc_info
+
 
     logger.add(NoExceptionHandler())
 

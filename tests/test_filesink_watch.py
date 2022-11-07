@@ -145,4 +145,4 @@ def test_file_closed_without_being_logged(tmp_path, delay, compression):
         compression=compression,
     )
     logger.remove()
-    assert filepath.exists() is (False if delay else True)
+    assert filepath.exists() is (not delay)

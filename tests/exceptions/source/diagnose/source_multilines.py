@@ -25,11 +25,10 @@ def bug_3(string):
 
 def bug_4():
     a, b = 1, 0
-    dct = {
+    return {
         "foo": 1,
         "bar": a / b,
     }
-    return dct
 
 
 string = """multi-lines

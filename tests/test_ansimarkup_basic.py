@@ -4,59 +4,22 @@ from colorama import Back, Fore, Style
 from .conftest import parse
 
 
-@pytest.mark.parametrize(
-    "text, expected",
-    [
-        ("<bold>1</bold>", Style.BRIGHT + "1" + Style.RESET_ALL),
-        ("<dim>1</dim>", Style.DIM + "1" + Style.RESET_ALL),
-        ("<normal>1</normal>", Style.NORMAL + "1" + Style.RESET_ALL),
-        ("<b>1</b>", Style.BRIGHT + "1" + Style.RESET_ALL),
-        ("<d>1</d>", Style.DIM + "1" + Style.RESET_ALL),
-        ("<n>1</n>", Style.NORMAL + "1" + Style.RESET_ALL),
-    ],
-)
+@pytest.mark.parametrize("text, expected", [("<bold>1</bold>", f"{Style.BRIGHT}1{Style.RESET_ALL}"), ("<dim>1</dim>", f"{Style.DIM}1{Style.RESET_ALL}"), ("<normal>1</normal>", f"{Style.NORMAL}1{Style.RESET_ALL}"), ("<b>1</b>", f"{Style.BRIGHT}1{Style.RESET_ALL}"), ("<d>1</d>", f"{Style.DIM}1{Style.RESET_ALL}"), ("<n>1</n>", f"{Style.NORMAL}1{Style.RESET_ALL}")])
 def test_styles(text, expected):
     assert parse(text, strip=False) == expected
 
 
-@pytest.mark.parametrize(
-    "text, expected",
-    [
-        ("<RED>1</RED>", Back.RED + "1" + Style.RESET_ALL),
-        ("<R>1</R>", Back.RED + "1" + Style.RESET_ALL),
-        ("<LIGHT-GREEN>1</LIGHT-GREEN>", Back.LIGHTGREEN_EX + "1" + Style.RESET_ALL),
-        ("<LG>1</LG>", Back.LIGHTGREEN_EX + "1" + Style.RESET_ALL),
-    ],
-)
+@pytest.mark.parametrize("text, expected", [("<RED>1</RED>", f"{Back.RED}1{Style.RESET_ALL}"), ("<R>1</R>", f"{Back.RED}1{Style.RESET_ALL}"), ("<LIGHT-GREEN>1</LIGHT-GREEN>", f"{Back.LIGHTGREEN_EX}1{Style.RESET_ALL}"), ("<LG>1</LG>", f"{Back.LIGHTGREEN_EX}1{Style.RESET_ALL}")])
 def test_background_colors(text, expected):
     assert parse(text, strip=False) == expected
 
 
-@pytest.mark.parametrize(
-    "text, expected",
-    [
-        ("<yellow>1</yellow>", Fore.YELLOW + "1" + Style.RESET_ALL),
-        ("<y>1</y>", Fore.YELLOW + "1" + Style.RESET_ALL),
-        ("<light-white>1</light-white>", Fore.LIGHTWHITE_EX + "1" + Style.RESET_ALL),
-        ("<lw>1</lw>", Fore.LIGHTWHITE_EX + "1" + Style.RESET_ALL),
-    ],
-)
+@pytest.mark.parametrize("text, expected", [("<yellow>1</yellow>", f"{Fore.YELLOW}1{Style.RESET_ALL}"), ("<y>1</y>", f"{Fore.YELLOW}1{Style.RESET_ALL}"), ("<light-white>1</light-white>", f"{Fore.LIGHTWHITE_EX}1{Style.RESET_ALL}"), ("<lw>1</lw>", f"{Fore.LIGHTWHITE_EX}1{Style.RESET_ALL}")])
 def test_foreground_colors(text, expected):
     assert parse(text, strip=False) == expected
 
 
-@pytest.mark.parametrize(
-    "text, expected",
-    [
-        (
-            "<b>1</b><d>2</d>",
-            Style.BRIGHT + "1" + Style.RESET_ALL + Style.DIM + "2" + Style.RESET_ALL,
-        ),
-        (
-            "<b>1</b>2<d>3</d>",
-            Style.BRIGHT + "1" + Style.RESET_ALL + "2" + Style.DIM + "3" + Style.RESET_ALL,
-        ),
-        (
+@pytest.mark.parametrize("text, expected", [("<b>1</b><d>2</d>", f"{Style.BRIGHT}1{Style.RESET_ALL}{Style.DIM}2{Style.RESET_ALL}"), ("<b>1</b>2<d>3</d>", f"{Style.BRIGHT}1{Style.RESET_ALL}2{Style.DIM}3{Style.RESET_ALL}"), (
             "0<b>1<d>2</d>3</b>4",
             "0"
             + Style.BRIGHT
@@ -68,8 +31,7 @@ def test_foreground_colors(text, expected):
             + "3"
             + Style.RESET_ALL
             + "4",
-        ),
-        (
+        ), (
             "<d>0<b>1<d>2</d>3</b>4</d>",
             Style.DIM
             + "0"
@@ -85,9 +47,7 @@ def test_foreground_colors(text, expected):
             + Style.DIM
             + "4"
             + Style.RESET_ALL,
-        ),
-    ],
-)
+        )])
 def test_nested(text, expected):
     assert parse(text, strip=False) == expected
 
@@ -110,15 +70,10 @@ def test_permissive_parsing(text, expected):
     assert parse(text, strip=False, strict=False) == expected
 
 
-@pytest.mark.parametrize(
-    "text, expected",
-    [
-        ("<red>foo</>", Fore.RED + "foo" + Style.RESET_ALL),
-        (
+@pytest.mark.parametrize("text, expected", [("<red>foo</>", f"{Fore.RED}foo{Style.RESET_ALL}"), (
             "<green><bold>bar</></green>",
             Fore.GREEN + Style.BRIGHT + "bar" + Style.RESET_ALL + Fore.GREEN + Style.RESET_ALL,
-        ),
-        (
+        ), (
             "a<yellow>b<b>c</>d</>e",
             "a"
             + Fore.YELLOW
@@ -130,22 +85,12 @@ def test_permissive_parsing(text, expected):
             + "d"
             + Style.RESET_ALL
             + "e",
-        ),
-    ],
-)
+        )])
 def test_autoclose(text, expected):
     assert parse(text, strip=False) == expected
 
 
-@pytest.mark.parametrize(
-    "text, expected",
-    [
-        (r"<red>foo\</red>bar</red>", Fore.RED + "foo</red>bar" + Style.RESET_ALL),
-        (r"<red>foo\<red>bar</red>", Fore.RED + "foo<red>bar" + Style.RESET_ALL),
-        (r"\<red>\</red>", "<red></red>"),
-        (r"foo\</>bar\</>baz", "foo</>bar</>baz"),
-    ],
-)
+@pytest.mark.parametrize("text, expected", [(r"<red>foo\</red>bar</red>", f"{Fore.RED}foo</red>bar{Style.RESET_ALL}"), (r"<red>foo\<red>bar</red>", f"{Fore.RED}foo<red>bar{Style.RESET_ALL}"), (r"\<red>\</red>", "<red></red>"), (r"foo\</>bar\</>baz", "foo</>bar</>baz")])
 def test_escaping(text, expected):
     assert parse(text, strip=False) == expected
 

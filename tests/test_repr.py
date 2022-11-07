@@ -24,7 +24,10 @@ def test_file_object(tmp_path):
     path = str(tmp_path / "test.log")
     file = open(path, "w")
     logger.add(file)
-    assert repr(logger) == "<loguru.logger handlers=[(id=0, level=10, sink=%s)]>" % path
+    assert (
+        repr(logger)
+        == f"<loguru.logger handlers=[(id=0, level=10, sink={path})]>"
+    )
 
 
 def test_file_str(tmp_path):

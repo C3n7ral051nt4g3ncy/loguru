@@ -233,7 +233,7 @@ def test_exception_is_tuple():
         reference = sys.exc_info()
 
     t_1, v_1, tb_1 = exception
-    t_2, v_2, tb_2 = (x for x in exception)
+    t_2, v_2, tb_2 = iter(exception)
     t_3, v_3, tb_3 = exception[0], exception[1], exception[2]
     t_4, v_4, tb_4 = exception.type, exception.value, exception.traceback
 
@@ -241,8 +241,8 @@ def test_exception_is_tuple():
     assert len(exception) == 3
     assert exception == reference
     assert reference == exception
-    assert not (exception != reference)
-    assert not (reference != exception)
+    assert exception == reference
+    assert reference == exception
     assert all(t == ZeroDivisionError for t in (t_1, t_2, t_3, t_4))
     assert all(isinstance(v, ZeroDivisionError) for v in (v_1, v_2, v_3, v_4))
     assert all(isinstance(tb, types.TracebackType) for tb in (tb_1, tb_2, tb_3, tb_4))

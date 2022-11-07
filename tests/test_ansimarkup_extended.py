@@ -4,28 +4,12 @@ from colorama import Back, Fore, Style
 from .conftest import parse
 
 
-@pytest.mark.parametrize(
-    "text, expected",
-    [
-        ("<bg red>1</bg red>", Back.RED + "1" + Style.RESET_ALL),
-        ("<bg BLACK>1</bg BLACK>", Back.BLACK + "1" + Style.RESET_ALL),
-        ("<bg light-green>1</bg light-green>", Back.LIGHTGREEN_EX + "1" + Style.RESET_ALL),
-        ("<bg LIGHT-MAGENTA>1</bg LIGHT-MAGENTA>", Back.LIGHTMAGENTA_EX + "1" + Style.RESET_ALL),
-    ],
-)
+@pytest.mark.parametrize("text, expected", [("<bg red>1</bg red>", f"{Back.RED}1{Style.RESET_ALL}"), ("<bg BLACK>1</bg BLACK>", f"{Back.BLACK}1{Style.RESET_ALL}"), ("<bg light-green>1</bg light-green>", f"{Back.LIGHTGREEN_EX}1{Style.RESET_ALL}"), ("<bg LIGHT-MAGENTA>1</bg LIGHT-MAGENTA>", f"{Back.LIGHTMAGENTA_EX}1{Style.RESET_ALL}")])
 def test_background_colors(text, expected):
     assert parse(text, strip=False) == expected
 
 
-@pytest.mark.parametrize(
-    "text, expected",
-    [
-        ("<fg yellow>1</fg yellow>", Fore.YELLOW + "1" + Style.RESET_ALL),
-        ("<fg BLUE>1</fg BLUE>", Fore.BLUE + "1" + Style.RESET_ALL),
-        ("<fg light-white>1</fg light-white>", Fore.LIGHTWHITE_EX + "1" + Style.RESET_ALL),
-        ("<fg LIGHT-CYAN>1</fg LIGHT-CYAN>", Fore.LIGHTCYAN_EX + "1" + Style.RESET_ALL),
-    ],
-)
+@pytest.mark.parametrize("text, expected", [("<fg yellow>1</fg yellow>", f"{Fore.YELLOW}1{Style.RESET_ALL}"), ("<fg BLUE>1</fg BLUE>", f"{Fore.BLUE}1{Style.RESET_ALL}"), ("<fg light-white>1</fg light-white>", f"{Fore.LIGHTWHITE_EX}1{Style.RESET_ALL}"), ("<fg LIGHT-CYAN>1</fg LIGHT-CYAN>", f"{Fore.LIGHTCYAN_EX}1{Style.RESET_ALL}")])
 def test_foreground_colors(text, expected):
     assert parse(text, strip=False) == expected
 
@@ -98,22 +82,7 @@ def test_nested(text, expected):
     assert parse(text, strip=False) == expected
 
 
-@pytest.mark.parametrize(
-    "text, expected",
-    [
-        ("<r>2 > 1</r>", Fore.RED + "2 > 1" + Style.RESET_ALL),
-        ("<r>1 < 2</r>", Fore.RED + "1 < 2" + Style.RESET_ALL),
-        ("<r>1 </ 2</r>", Fore.RED + "1 </ 2" + Style.RESET_ALL),
-        ("{: <10}<r>1</r>", "{: <10}" + Fore.RED + "1" + Style.RESET_ALL),
-        ("{: </10}<r>1</r>", "{: </10}" + Fore.RED + "1" + Style.RESET_ALL),
-        ("<r>1</r>{: >10}", Fore.RED + "1" + Style.RESET_ALL + "{: >10}"),
-        ("<1<r>2</r>3>", "<1" + Fore.RED + "2" + Style.RESET_ALL + "3>"),
-        ("</1<r>2</r>3>", "</1" + Fore.RED + "2" + Style.RESET_ALL + "3>"),
-        ("<1<r>2 < 3</r>4>", "<1" + Fore.RED + "2 < 3" + Style.RESET_ALL + "4>"),
-        ("<1<r>2 </ 3</r>4>", "<1" + Fore.RED + "2 </ 3" + Style.RESET_ALL + "4>"),
-        ("<1<r>3 > 2</r>4>", "<1" + Fore.RED + "3 > 2" + Style.RESET_ALL + "4>"),
-    ],
-)
+@pytest.mark.parametrize("text, expected", [("<r>2 > 1</r>", f"{Fore.RED}2 > 1{Style.RESET_ALL}"), ("<r>1 < 2</r>", f"{Fore.RED}1 < 2{Style.RESET_ALL}"), ("<r>1 </ 2</r>", f"{Fore.RED}1 </ 2{Style.RESET_ALL}"), ("{: <10}<r>1</r>", "{: <10}" + Fore.RED + "1" + Style.RESET_ALL), ("{: </10}<r>1</r>", "{: </10}" + Fore.RED + "1" + Style.RESET_ALL), ("<r>1</r>{: >10}", f"{Fore.RED}1{Style.RESET_ALL}" + "{: >10}"), ("<1<r>2</r>3>", f"<1{Fore.RED}2{Style.RESET_ALL}3>"), ("</1<r>2</r>3>", f"</1{Fore.RED}2{Style.RESET_ALL}3>"), ("<1<r>2 < 3</r>4>", f"<1{Fore.RED}2 < 3{Style.RESET_ALL}4>"), ("<1<r>2 </ 3</r>4>", f"<1{Fore.RED}2 </ 3{Style.RESET_ALL}4>"), ("<1<r>3 > 2</r>4>", f"<1{Fore.RED}3 > 2{Style.RESET_ALL}4>")])
 def test_tricky_parse(text, expected):
     assert parse(text, strip=False) == expected
 

@@ -152,9 +152,11 @@ class ExceptionFormatter:
 
     def _is_file_mine(self, file):
         filepath = os.path.abspath(file).lower()
-        if not filepath.endswith(".py"):
-            return False
-        return not any(filepath.startswith(d) for d in self._lib_dirs)
+        return (
+            not any(filepath.startswith(d) for d in self._lib_dirs)
+            if filepath.endswith(".py")
+            else False
+        )
 
     def _extract_frames(self, tb, is_first, *, limit=None, from_decorator=False):
         frames, final_source = [], None
@@ -299,11 +301,11 @@ class ExceptionFormatter:
         try:
             v = repr(v)
         except Exception:
-            v = "<unprintable %s object>" % type(v).__name__
+            v = f"<unprintable {type(v).__name__} object>"
 
         max_length = self._max_length
         if max_length is not None and len(v) > max_length:
-            v = v[: max_length - 3] + "..."
+            v = f"{v[:max_length - 3]}..."
         return v
 
     def _format_locations(self, frames_lines, *, has_introduction):
@@ -311,9 +313,7 @@ class ExceptionFormatter:
         regex = r'^  File "(?P<file>.*?)", line (?P<line>[^,]+)(?:, in (?P<function>.*))?\n'
 
         for frame in frames_lines:
-            match = re.match(regex, frame)
-
-            if match:
+            if match := re.match(regex, frame):
                 file, line, function = match.group("file", "line", "function")
 
                 is_mine = self._is_file_mine(file)
@@ -325,7 +325,7 @@ class ExceptionFormatter:
 
                 if self._backtrace and function and function.endswith(self._catch_point_identifier):
                     function = function[: -len(self._catch_point_identifier)]
-                    pattern = ">" + pattern[1:]
+                    pattern = f">{pattern[1:]}"
 
                 if self._colorize and is_mine:
                     dirname, basename = os.path.split(file)
@@ -358,10 +358,12 @@ class ExceptionFormatter:
 
         if exc_value:
             if exc_value.__cause__ is not None and id(exc_value.__cause__) not in seen:
-                for text in self._format_exception(
-                    exc_value.__cause__, exc_value.__cause__.__traceback__, seen=seen
-                ):
-                    yield text
+                yield from self._format_exception(
+                    exc_value.__cause__,
+                    exc_value.__cause__.__traceback__,
+                    seen=seen,
+                )
+
                 cause = "The above exception was the direct cause of the following exception:"
                 if self._colorize:
                     cause = self._theme["cause"].format(cause)
@@ -375,10 +377,12 @@ class ExceptionFormatter:
                 and id(exc_value.__context__) not in seen
                 and not exc_value.__suppress_context__
             ):
-                for text in self._format_exception(
-                    exc_value.__context__, exc_value.__context__.__traceback__, seen=seen
-                ):
-                    yield text
+                yield from self._format_exception(
+                    exc_value.__context__,
+                    exc_value.__context__.__traceback__,
+                    seen=seen,
+                )
+
                 context = "During handling of the above exception, another exception occurred:"
                 if self._colorize:
                     context = self._theme["context"].format(context)
@@ -404,7 +408,7 @@ class ExceptionFormatter:
                 exception_type, exception_value = error_message.split(":", 1)
                 exception_type = self._theme["exception_type"].format(exception_type)
                 exception_value = self._theme["exception_value"].format(exception_value)
-                error_message = exception_type + ":" + exception_value
+                error_message = f"{exception_type}:{exception_value}"
             else:
                 error_message = self._theme["exception_type"].format(error_message)
 
@@ -412,7 +416,7 @@ class ExceptionFormatter:
             if issubclass(exc_type, AssertionError) and not str(exc_value) and final_source:
                 if self._colorize:
                     final_source = self._syntax_highlighter.highlight(final_source)
-                error_message += ": " + final_source
+                error_message += f": {final_source}"
 
             error_message = "\n" + error_message
 

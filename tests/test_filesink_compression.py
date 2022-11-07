@@ -18,12 +18,12 @@ def test_compression_ext(tmp_path, compression):
     i = logger.add(tmp_path / "file.log", compression=compression)
     logger.remove(i)
 
-    check_dir(tmp_path, files=[("file.log.%s" % compression, None)])
+    check_dir(tmp_path, files=[(f"file.log.{compression}", None)])
 
 
 def test_compression_function(tmp_path):
     def compress(file):
-        os.replace(file, file + ".rar")
+        os.replace(file, f"{file}.rar")
 
     i = logger.add(tmp_path / "file.log", compression=compress)
     logger.remove(i)

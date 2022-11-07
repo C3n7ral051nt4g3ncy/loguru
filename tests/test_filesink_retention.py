@@ -44,7 +44,7 @@ def test_retention_count(tmp_path, retention):
 def test_retention_function(tmp_path):
     def func(logs):
         for log in logs:
-            os.rename(log, log + ".xyz")
+            os.rename(log, f"{log}.xyz")
 
     tmp_path.joinpath("test.log.1").write_text("A")
     tmp_path.joinpath("test").write_text("B")
@@ -64,7 +64,6 @@ def test_retention_function(tmp_path):
 
 def test_managed_files(tmp_path):
     others = {
-        "test.log",
         "test.log.1",
         "test.log.1.gz",
         "test.log.rar",
@@ -80,6 +79,7 @@ def test_managed_files(tmp_path):
         "test.foo.log.bar",
         "test.log.log",
     }
+
 
     for other in others:
         tmp_path.joinpath(other).write_text(other)
@@ -116,7 +116,7 @@ def test_not_managed_files(tmp_path):
     i = logger.add(tmp_path / "test.log", retention=0, catch=False)
     logger.remove(i)
 
-    assert set(f.name for f in tmp_path.iterdir()) == others
+    assert {f.name for f in tmp_path.iterdir()} == others
 
 
 @pytest.mark.parametrize("filename", ["test", "test.log"])

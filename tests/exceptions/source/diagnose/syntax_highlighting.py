@@ -21,7 +21,7 @@ def c():
 
 
 def d():
-    min(range(1, 10)), list(), dict(), c(), ...
+    (min(range(1, 10)), [], {}, c(), ...)
 
 
 def e(x):

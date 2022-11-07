@@ -846,7 +846,7 @@ class Logger:
         elif filter == "":
             filter_func = _filters.filter_none
         elif isinstance(filter, str):
-            parent = filter + "."
+            parent = f"{filter}."
             length = len(parent)
             filter_func = functools.partial(_filters.filter_by_name, parent=parent, length=length)
         elif isinstance(filter, dict):
@@ -1009,11 +1009,7 @@ class Logger:
             if handler_id is not None and handler_id not in handlers:
                 raise ValueError("There is no existing handler with id %d" % handler_id) from None
 
-            if handler_id is None:
-                handler_ids = list(handlers.keys())
-            else:
-                handler_ids = [handler_id]
-
+            handler_ids = list(handlers.keys()) if handler_id is None else [handler_id]
             for handler_id in handler_ids:
                 handler = handlers.pop(handler_id)
 
@@ -1719,7 +1715,7 @@ class Logger:
         return [self.add(**params) for params in handlers]
 
     def _change_activation(self, name, status):
-        if not (name is None or isinstance(name, str)):
+        if name is not None and not isinstance(name, str):
             raise TypeError(
                 "Invalid name, it should be a string (or None), not: '%s'" % type(name).__name__
             )
@@ -1743,7 +1739,7 @@ class Logger:
             ]
 
             parent_status = next((s for n, s in activation_list if name[: len(n)] == n), None)
-            if parent_status != status and not (name == "" and status is True):
+            if parent_status != status and (name != "" or status is not True):
                 activation_list.append((name, status))
 
                 def modules_depth(x):
@@ -1752,7 +1748,7 @@ class Logger:
                 activation_list.sort(key=modules_depth, reverse=True)
 
             for n in enabled:
-                if n is not None and (n + ".")[: len(name)] == name:
+                if n is not None and f"{n}."[: len(name)] == name:
                     enabled[n] = status
 
             self._core.activation_list = activation_list
@@ -1894,7 +1890,7 @@ class Logger:
                 if not status:
                     return
             else:
-                dotted_name = name + "."
+                dotted_name = f"{name}."
                 for dotted_module_name, status in core.activation_list:
                     if dotted_name[: len(dotted_module_name)] == dotted_module_name:
                         if status:

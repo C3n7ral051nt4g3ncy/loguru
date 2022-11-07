@@ -7,7 +7,7 @@ except ImportError:
 
 with open("loguru/__init__.py", "r") as file:
     regex_version = r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]'
-    version = re.search(regex_version, file.read(), re.MULTILINE).group(1)
+    version = re.search(regex_version, file.read(), re.MULTILINE)[1]
 
 with open("README.rst", "rb") as file:
     readme = file.read().decode("utf-8")
@@ -23,7 +23,7 @@ setup(
     author="Delgan",
     author_email="delgan.py@gmail.com",
     url="https://github.com/Delgan/loguru",
-    download_url="https://github.com/Delgan/loguru/archive/{}.tar.gz".format(version),
+    download_url=f"https://github.com/Delgan/loguru/archive/{version}.tar.gz",
     project_urls={
         "Changelog": "https://github.com/Delgan/loguru/blob/master/CHANGELOG.rst",
         "Documentation": "https://loguru.readthedocs.io/en/stable/index.html",
